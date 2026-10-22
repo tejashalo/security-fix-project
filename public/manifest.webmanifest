@@ -1,0 +1,19 @@
+{
+  "name": "VibeGuard — security check for vibe-coded projects",
+  "short_name": "VibeGuard",
+  "description": "Find and fix leaked keys, open admin routes, missing auth, XSS and more in vibe-coded websites and apps.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#eef1f5",
+  "theme_color": "#14213d",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Scan a website", "url": "/website" },
+    { "name": "Scan an app", "url": "/app" }
+  ]
+}

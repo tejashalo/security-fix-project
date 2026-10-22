@@ -1,0 +1,9 @@
+# Paths (globs) or rules (rule:<category>) VibeGuard should skip.
+# VibeGuard's own demo project and tests are intentionally vulnerable:
+server/lib/demo.js
+test/
+# The checks contain the patterns they search for:
+server/checks/
+server/lib/patterns.js
+# Code templates that VibeGuard adds to *your* project:
+server/lib/templates.js

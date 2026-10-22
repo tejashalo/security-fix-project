@@ -1,0 +1,32 @@
+name: VibeGuard security scan
+description: Scan a vibe-coded website or app for leaked keys, open admin routes, missing auth, XSS, CORS and more.
+branding:
+  icon: shield
+  color: yellow
+inputs:
+  path:
+    description: Folder to scan
+    default: .
+  mode:
+    description: web or app
+    default: web
+  fail-on:
+    description: Fail the job on open issues at this level or worse (critical, high, medium, low)
+    default: high
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+    - shell: bash
+      env:
+        VG_PATH: ${{ inputs.path }}
+        VG_MODE: ${{ inputs.mode }}
+        VG_FAIL_ON: ${{ inputs.fail-on }}
+      run: node "$GITHUB_ACTION_PATH/bin/vibeguard.js" scan "$VG_PATH" --mode "$VG_MODE" --no-fix --ci --fail-on "$VG_FAIL_ON" --report vibeguard-report.html
+    - if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: vibeguard-report
+        path: vibeguard-report.html

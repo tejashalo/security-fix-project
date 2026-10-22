@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>VibeGuard — security check for vibe-coded projects</title>
+  <meta name="description" content="Upload your vibe-coded website or app. VibeGuard finds leaked API keys, open admin routes, missing auth, XSS, CORS and more — fixes what it safely can and tells you exactly what it did.">
+  <meta name="theme-color" content="#14213d">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <a class="brand" href="/" aria-label="VibeGuard home">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7L16 2Z" fill="currentColor"/><path d="m10.5 16.5 4 4 7.5-8" fill="none" stroke="var(--tag)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      VibeGuard
+    </a>
+    <nav class="sections" aria-label="Project type">
+      <a href="/website" data-mode="web" class="seg">Website</a>
+      <a href="/app" data-mode="app" class="seg">App</a>
+    </nav>
+    <button class="install" id="installBtn" hidden>Install app</button>
+  </header>
+
+  <main id="main">
+    <!-- ================= START ================= -->
+    <section id="start" class="start">
+      <div class="intro">
+        <h1 id="headline">Your vibe-coded website works. Now make sure it isn't wide open.</h1>
+        <p class="lede" id="lede">Upload the project. VibeGuard checks 30 things AI tools usually get wrong — leaked keys, open admin pages, missing logins, XSS, CORS — fixes what it safely can, and hands you back the fixed code with a plain-English report.</p>
+
+        <form id="scanForm" class="panel" novalidate>
+          <div class="source" role="tablist" aria-label="How to add your project">
+            <button type="button" role="tab" aria-selected="true" aria-controls="srcZip" id="tabZip">Upload ZIP</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="srcGit" id="tabGit">Public GitHub repo</button>
+          </div>
+
+          <div id="srcZip" role="tabpanel" aria-labelledby="tabZip">
+            <label class="drop" id="drop">
+              <input type="file" id="file" name="project" accept=".zip,application/zip" class="sr-only">
+              <span class="drop-title" id="dropTitle">Drop your project ZIP here</span>
+              <span class="drop-hint" id="dropHint">or click to choose a file · up to 50 MB · leave out node_modules</span>
+            </label>
+            <p class="tip">Include the hidden <code>.git</code> folder in the ZIP to also scan your commit history for old leaked keys.</p>
+          </div>
+          <div id="srcGit" role="tabpanel" aria-labelledby="tabGit" hidden>
+            <label class="field">
+              <span>Repository URL</span>
+              <input type="url" id="repo" placeholder="https://github.com/you/your-project" autocomplete="off" spellcheck="false" inputmode="url">
+            </label>
+            <p class="tip">Public repos only. Git history is scanned too.</p>
+          </div>
+
+          <fieldset class="options">
+            <legend class="sr-only">Options</legend>
+            <label class="check"><input type="checkbox" id="optFix" checked> <span><b>Fix issues automatically</b> and give me the fixed project</span></label>
+            <label class="check"><input type="checkbox" id="optOnline" checked> <span><b>Check packages online</b> for known vulnerabilities and fake names</span></label>
+          </fieldset>
+
+          <div class="actions">
+            <button type="submit" class="primary" id="scanBtn">Scan my website</button>
+            <button type="button" class="ghost" id="demoBtn">Try it on a demo project</button>
+          </div>
+          <p class="form-error" id="formError" role="alert" hidden></p>
+        </form>
+        <p class="privacy">Your code is never executed or stored long-term. Uploads are deleted the moment the scan finishes; results are deleted after 30 minutes, or immediately when you press “Delete my data”.</p>
+      </div>
+
+      <aside class="tag" aria-label="What gets checked">
+        <div class="tag-hole" aria-hidden="true"></div>
+        <h2 class="tag-title">Inspection list</h2>
+        <p class="tag-sub" id="tagSub">Every scan covers all of these.</p>
+        <ol class="checklist" id="checklist"></ol>
+      </aside>
+    </section>
+
+    <!-- ================= PROGRESS ================= -->
+    <section id="progress" class="progress" hidden aria-live="polite">
+      <h2 id="progressTitle">Inspecting your project</h2>
+      <p class="step" id="progressStep">Starting…</p>
+      <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"><span id="barFill"></span></div>
+    </section>
+
+    <!-- ================= RESULTS ================= -->
+    <section id="results" class="results" hidden>
+      <div class="verdict">
+        <div class="scores">
+          <div class="score" id="scoreBefore"><span class="num"></span><span class="lbl">before</span></div>
+          <svg class="arrow" viewBox="0 0 40 16" aria-hidden="true"><path d="M2 8h32m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          <div class="score after" id="scoreAfter"><span class="num"></span><span class="lbl">after</span></div>
+        </div>
+        <div class="verdict-text">
+          <h2 id="verdictTitle"></h2>
+          <p id="verdictSummary"></p>
+          <p class="meta" id="verdictMeta"></p>
+        </div>
+      </div>
+
+      <div class="downloads" id="downloads">
+        <a class="primary" id="dlZip" href="#" download>Download fixed project</a>
+        <a class="ghost" id="dlHtml" href="#" download>Report (HTML)</a>
+        <a class="ghost" id="dlMd" href="#" download>Report (Markdown)</a>
+        <a class="ghost" id="dlJson" href="#" download>JSON</a>
+        <button class="ghost" id="copyAll" type="button">Copy AI prompt for what's left</button>
+      </div>
+
+      <div class="cols">
+        <aside class="tag tag-results" aria-label="Checklist results">
+          <div class="tag-hole" aria-hidden="true"></div>
+          <h2 class="tag-title">Inspection list</h2>
+          <ol class="checklist done" id="checklistResults"></ol>
+        </aside>
+
+        <div class="findings">
+          <div class="filters" role="tablist" aria-label="Filter issues">
+            <button type="button" role="tab" data-filter="open" aria-selected="true">Needs you <span id="cOpen"></span></button>
+            <button type="button" role="tab" data-filter="fixed" aria-selected="false">Fixed <span id="cFixed"></span></button>
+            <button type="button" role="tab" data-filter="all" aria-selected="false">All <span id="cAll"></span></button>
+          </div>
+          <div id="findingList"></div>
+
+          <div id="notesBox" class="notes" hidden>
+            <h3>Before you deploy</h3>
+            <ul id="notesList"></ul>
+          </div>
+
+          <details id="changesBox" class="changes" hidden>
+            <summary>Files VibeGuard changed (<span id="changesCount"></span>)</summary>
+            <div id="changesList"></div>
+          </details>
+
+          <div class="after-actions">
+            <button type="button" class="ghost" id="newScan">Scan another project</button>
+            <button type="button" class="danger" id="deleteData">Delete my data now</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="how" id="how">
+      <h2>How it works</h2>
+      <ol class="steps">
+        <li><h3>Upload</h3><p>Zip your project folder (skip <code>node_modules</code>) or paste a public GitHub link. Pick Website or App so the right checks run.</p></li>
+        <li><h3>Inspect</h3><p>VibeGuard reads your code — it never runs it — and looks for the mistakes AI coding tools make most often.</p></li>
+        <li><h3>Fix</h3><p>Safe fixes are applied for you: keys moved to <code>.env</code>, admin routes locked, headers and rate limits added, risky settings switched off.</p></li>
+        <li><h3>Review</h3><p>You get the fixed project, a before/after diff and a report. For anything it can't fix safely, you get a ready-made prompt for Cursor, Lovable, Bolt or Claude.</p></li>
+      </ol>
+      <p class="fine">VibeGuard catches common, known mistakes. It does not guarantee an app can't be hacked — rotate any key it finds, and get a professional review before handling payments or sensitive data at scale.</p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>VibeGuard is open source.</span>
+    <a href="https://github.com/tejashalo/security-fix-project" rel="noopener">Source on GitHub</a>
+    <span>Command line: <code>npx vibeguard scan .</code></span>
+  </footer>
+
+  <template id="findingTpl">
+    <details class="finding">
+      <summary>
+        <span class="sev"></span>
+        <span class="f-title"></span>
+        <span class="f-loc"></span>
+      </summary>
+      <div class="f-body">
+        <pre class="f-snippet" hidden></pre>
+        <p class="f-why"></p>
+        <p class="f-fix"></p>
+        <div class="f-diff" hidden><pre class="del"></pre><pre class="add"></pre></div>
+        <button type="button" class="ghost small f-copy" hidden>Copy fix prompt</button>
+      </div>
+    </details>
+  </template>
+</body>
+</html>

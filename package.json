@@ -1,0 +1,18 @@
+{
+  "name": "vibeguard",
+  "version": "1.0.0",
+  "description": "Upload a vibe-coded website or app and VibeGuard finds and fixes common security holes: leaked API keys, open admin routes, missing auth, XSS, CORS, rate limiting, headers, vulnerable packages and more.",
+  "main": "server/index.js",
+  "bin": { "vibeguard": "bin/vibeguard.js" },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test test/*.test.js",
+    "scan": "node bin/vibeguard.js"
+  },
+  "engines": { "node": ">=18.17" },
+  "keywords": ["security", "scanner", "vibe-coding", "secrets", "xss", "cors", "rate-limit", "audit"],
+  "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/tejashalo/security-fix-project.git" },
+  "dependencies": {}
+}
