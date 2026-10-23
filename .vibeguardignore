@@ -7,3 +7,6 @@ server/checks/
 server/lib/patterns.js
 # Code templates that VibeGuard adds to *your* project:
 server/lib/templates.js
+docs/index.html
+web/
+tools/

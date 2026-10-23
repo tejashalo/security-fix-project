@@ -21,7 +21,9 @@
 
 ## Try it
 
-**Online:** [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tejashalo/security-fix-project) — free; sign in with GitHub and Render gives you a public link like `https://vibeguard.onrender.com`.
+**Online, no install:** **[Open VibeGuard](https://claude.ai/artifact/V6nJqWfth1rEaBjAfUoDoC)** — the scanner runs entirely in your browser, so your code is never uploaded anywhere. (The in-browser version skips the two checks that need the internet or git: live package-vulnerability lookups and git-history scanning.)
+
+**Your own copy online:** the same in-browser page is in [`docs/index.html`](docs/index.html) — turn on GitHub Pages (Settings → Pages → Branch `main`, folder `/docs`) to get `https://tejashalo.github.io/security-fix-project/`. For the full version with every check, use [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tejashalo/security-fix-project).
 
 **On your computer (Windows):** download this repo (Code → Download ZIP), unzip, and double-click `start-windows.bat`. On macOS/Linux run `./start.sh`. The site opens at http://localhost:3000.
 
@@ -145,6 +147,8 @@ server/lib/scanner.js   runs all checks, scores, builds the result
 server/checks/*.js      one file per area (secrets, env, routes, cors, deps, mobile…)
 server/lib/templates.js code VibeGuard adds to your project
 public/                 website + PWA (no framework)
+web/                    browser shims + local API for the no-server version
+tools/build-web.js      bundles everything into docs/index.html (npm run build:web)
 bin/vibeguard.js        CLI
 ```
 

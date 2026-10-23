@@ -70,6 +70,7 @@ async function scanProject(root, opts = {}, onProgress = () => {}) {
   for (const check of CHECKS) {
     i++;
     onProgress(check.title, Math.round(5 + (i / CHECKS.length) * 85));
+    if (opts.yieldEachStep) await new Promise((r) => setTimeout(r, 0)); // let the browser repaint progress
     try {
       await check.run(ctx, (msg) => onProgress(msg, Math.round(5 + (i / CHECKS.length) * 85)));
     } catch (err) {

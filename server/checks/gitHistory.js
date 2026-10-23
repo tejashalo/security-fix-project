@@ -10,6 +10,10 @@ module.exports = {
   title: 'Searching git history for leaked secrets',
   async run(ctx) {
     const { p } = ctx;
+    if (!git.available()) {
+      ctx.na('git', 'Git history can only be checked where git is installed — use the downloadable version (start-windows.bat / CLI) to scan past commits.');
+      return;
+    }
     if (!p.hasGit) {
       ctx.na('git', 'No .git folder in the upload. To scan history, zip the project including the hidden .git folder, or scan a GitHub URL.');
       return;

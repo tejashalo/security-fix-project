@@ -323,12 +323,33 @@
   let installEvt = null;
   window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt = e; $('#installBtn').hidden = false; });
   $('#installBtn').addEventListener('click', async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice; installEvt = null; $('#installBtn').hidden = true; });
-  if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+  // Downloads in the in-browser build go through VG_LOCAL (the viewer's save dialog), not plain links.
+  $('#downloads').addEventListener('click', async (e) => {
+    const a = e.target.closest('a[data-file]');
+    if (!a || !window.VG_LOCAL) return;
+    e.preventDefault();
+    try {
+      const r = await window.VG_LOCAL.download(jobId, a.dataset.file);
+      if (r === 'saved') toast('Saved');
+    } catch (err) { toast(err.message || 'Could not save the file'); }
+  });
+
+  if (window.VG_LOCAL) {
+    // In-browser build: no server, so no GitHub cloning, registry lookups or server-side data to delete.
+    $('#tabGit').hidden = true;
+    $('#optOnline').checked = false;
+    $('#optOnline').closest('label').hidden = true;
+    $('#deleteData').hidden = true;
+    $('.privacy').textContent = 'Runs entirely in your browser: your code is never uploaded anywhere. Results disappear when you close this tab. Package vulnerability lookups and git-history scanning need the downloadable version.';
+    $('.tip').textContent = 'Zip your project folder (leave out node_modules) and drop it here.';
+  }
+
+  if (!window.VG_LOCAL && 'serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
 
   // ---------- boot ----------
   fetch('/api/checks').then((r) => r.json()).then((c) => { checks = c; applyMode(mode, false); }).catch(() => applyMode(mode, false));
   applyMode(mode, false);
   // Resume a scan after a reload, but only within the same section (Website/App).
   const [savedId, savedMode] = (store.get('vg-job') || '').split(':');
-  if (/^[a-f0-9]{32}$/.test(savedId || '') && savedMode === mode) { jobId = savedId; show('progress'); poll(); }
+  if (!window.VG_LOCAL && /^[a-f0-9]{32}$/.test(savedId || '') && savedMode === mode) { jobId = savedId; show('progress'); poll(); }
 })();

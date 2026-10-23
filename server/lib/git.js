@@ -49,6 +49,15 @@ function run(root, args, { timeout = 60000, maxBuffer = 64 * 1024 * 1024 } = {})
   return { ok: r.status === 0, out: r.stdout || '', err: r.stderr || '' };
 }
 
+let gitAvailable = null;
+/** True when a working `git` binary exists (false in the browser build or without git installed). */
+function available() {
+  if (gitAvailable === null) {
+    try { gitAvailable = spawnSync('git', ['--version'], { env: safeEnv(), timeout: 10000 }).status === 0; } catch { gitAvailable = false; }
+  }
+  return gitAvailable;
+}
+
 function trackedFiles(root) {
   const r = run(root, ['ls-files', '-z']);
   return r.ok ? r.out.split('\0').filter(Boolean) : [];
@@ -98,4 +107,4 @@ function cloneGithub(owner, repo, dest, { timeout = 120000 } = {}) {
   });
 }
 
-module.exports = { run, trackedFiles, everCommittedFiles, historyAddedLines, commitCount, cloneGithub, sanitizeRepo };
+module.exports = { available, run, trackedFiles, everCommittedFiles, historyAddedLines, commitCount, cloneGithub, sanitizeRepo };

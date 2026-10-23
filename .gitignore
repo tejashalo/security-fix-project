@@ -8,3 +8,4 @@ coverage/
 *-vibeguard-fixed/
 _vibeguard_quarantine/
 .vibeguard/
+dist/
