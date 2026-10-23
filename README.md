@@ -9,6 +9,22 @@
 
 > VibeGuard catches common, known mistakes. It cannot guarantee an app can't be hacked. Rotate any key it finds, and get a professional review before you handle payments or sensitive data at scale.
 
+## Screenshots
+
+| Website section | Scan results |
+|---|---|
+| ![Website section](docs/screenshots/website-home.png) | ![Scan results with before/after score](docs/screenshots/scan-results.png) |
+| **What VibeGuard fixed (before → after)** | **App section** |
+| ![What was fixed](docs/screenshots/what-was-fixed.png) | ![App section](docs/screenshots/app-section.png) |
+
+<p align="center"><img src="docs/screenshots/phone.png" alt="VibeGuard on a phone" width="260"></p>
+
+## Try it
+
+**Online:** [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tejashalo/security-fix-project) — free; sign in with GitHub and Render gives you a public link like `https://vibeguard.onrender.com`.
+
+**On your computer (Windows):** download this repo (Code → Download ZIP), unzip, and double-click `start-windows.bat`. On macOS/Linux run `./start.sh`. The site opens at http://localhost:3000.
+
 ---
 
 ## What it checks (and fixes)
