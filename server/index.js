@@ -203,7 +203,12 @@ server.headersTimeout = 20000;
 server.keepAliveTimeout = 5000;
 
 if (require.main === module) {
-  server.listen(PORT, HOST, () => console.log(`VibeGuard running on http://localhost:${PORT}`));
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') console.error(`Port ${PORT} is already in use. Close the other program (or another VibeGuard window), or start with a different PORT.`);
+    else console.error(err);
+    process.exit(1);
+  });
+  server.listen(PORT, HOST, () => console.log(`VibeGuard is running. Open http://localhost:${PORT} in your browser. Keep this window open.`));
 }
 
 module.exports = { server };
